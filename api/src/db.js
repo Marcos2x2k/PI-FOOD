@@ -2,9 +2,7 @@ require('dotenv').config();
 const { Sequelize } = require('sequelize');
 const fs = require('fs');
 const path = require('path');
-const {
-  DB_USER, DB_PASSWORD, DB_HOST,
-} = process.env;
+const {DB_USER, DB_PASSWORD, DB_HOST} = process.env;
 
 const sequelize = new Sequelize(`postgres://${DB_USER}:${DB_PASSWORD}@${DB_HOST}/food`, {
   logging: false, // set to console.log to see the raw SQL queries
@@ -23,6 +21,7 @@ fs.readdirSync(path.join(__dirname, '/models'))
 
 // Injectamos la conexion (sequelize) a todos los modelos
 modelDefiners.forEach(model => model(sequelize));
+
 // Capitalizamos los nombres de los modelos ie: product => Product
 let entries = Object.entries(sequelize.models);
 let capsEntries = entries.map((entry) => [entry[0][0].toUpperCase() + entry[0].slice(1), entry[1]]);
@@ -30,10 +29,19 @@ sequelize.models = Object.fromEntries(capsEntries);
 
 // En sequelize.models están todos los modelos importados como propiedades
 // Para relacionarlos hacemos un destructuring
-const { Recipe } = sequelize.models;
+const { Recipe, Type } = sequelize.models; // Aguegue type porque no estaba
 
-// Aca vendrian las relaciones
+// Aca vendrian las relaciones DE MUCHO A MUCHOS
 // Product.hasMany(Reviews);
+
+// La relación entre ambas entidades debe ser de muchos a muchos 
+// ya que una receta puede ser parte de varios tipos de dieta en simultaneo y, 
+// a su vez, un tipo de dieta puede contener múltiples recetas distintas. 
+Type.belongsToMany(Recipe, {through: "recipe_type"});
+Recipe.belongsToMany(Type, {through: "recipe_type"}); // atravez tabla intermedia recipes_types
+
+
+
 
 module.exports = {
   ...sequelize.models, // para poder importar los modelos así: const { Product, User } = require('./db.js');
