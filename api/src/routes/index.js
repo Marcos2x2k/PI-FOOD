@@ -39,7 +39,7 @@ const router = Router();
     // como por ejemplo el tipo de dieta deben agregar el flag: 
     // &addRecipeInformation=true a este endpoint    
     const getApiInfo = async () => {        
-                const apiHtml = await axios ('https://api.spoonacular.com/recipes/complexSearch?apiKey=dcdefe9c20dd489db36f3ac43aaa913a&addRecipeInformation=true&number=100');
+                const apiHtml = await axios.get('https://api.spoonacular.com/recipes/complexSearch?apiKey=e52d0eec39494ada9566cf2aff44255e&addRecipeInformation=true&number=100');
             
                                         // ('https://api.spoonacular.com/recipes/complexSearch',{
                                         // headers: {'x-api-key': `${API_KEY}`}}); 
@@ -54,7 +54,7 @@ const router = Router();
                 return {
                     id: p.id,
                     name: p.title,
-                    imagen: p.image,
+                    image: p.image,
                     resumen: p.summary,
                     puntuacion: p.spoonacularScore,
                     saludableLvl: p.healthScore,
@@ -112,7 +112,7 @@ router.get ('/recipes', async (req, res) =>{
 
 //GET POR TYPES (es por tipos de Dietas)
 router.get ('/types', async (req, res) =>{
-    const apiHtml = await axios.get('https://api.spoonacular.com/recipes/complexSearch?apiKey=dcdefe9c20dd489db36f3ac43aaa913a&addRecipeInformation=true&number=100');
+    const apiHtml = await axios.get('https://api.spoonacular.com/recipes/complexSearch?apiKey=e52d0eec39494ada9566cf2aff44255e&addRecipeInformation=true&number=100');
     const type = apiHtml.data.map(p => p.type)
 
     const types = type.toString().trim().split(/\s*,\s*/);

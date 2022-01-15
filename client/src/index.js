@@ -3,19 +3,22 @@ import ReactDOM from 'react-dom';
 import './index.css';
 import App from './App';
 import reportWebVitals from './reportWebVitals';
+
+//IMPORTO los 3
 import {Provider} from 'react-redux';
 import {store} from './store';
 import {BrowserRouter} from 'react-router-dom'
 
 
 ReactDOM.render( // conviene siempre envolver en provider sino redux no nos va a funcionar
-  <BrowserRouter>
-  <Provider store={store}>
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>
-  </Provider>
-  </BrowserRouter>,
+  // <BrowserRouter>
+  // SIEMPRE ENVOLVER EN PROVIDER O REDUX NO NOS VA A ANDAR
+  <Provider store={store}> 
+    <React.StrictMode>
+      <App />
+    </React.StrictMode>
+  </Provider>,
+  // </BrowserRouter>,
   document.getElementById('root') 
 );
 

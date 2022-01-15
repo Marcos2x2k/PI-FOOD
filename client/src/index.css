@@ -1,4 +1,8 @@
 body {
+  /* AGREGO UN FONDO PARA TODA LA APLICACION */
+  background: url('https://logisber.com/contenido/subidas/2020/09/transporte-y-logistica-de-alimentos-y-bebidas-1920x1080.jpg');
+  background-repeat: no-repeat;
+  background-attachment: fixed; 
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
     'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',

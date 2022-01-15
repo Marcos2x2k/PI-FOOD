@@ -1,0 +1,20 @@
+.logo{
+    border-radius:180px;
+    border:5px solid black;
+    width: 300px;
+    height: 300px;
+    animation-duration: 2s;
+    animation-name: logo;
+    /* animation-iteration-count: infinite; */
+}
+
+@keyframes logo{
+    50%{
+        width: 300px;
+        height: 300px;
+    }
+    50%{
+        width: 350px;
+        height: 350px;
+    }
+}

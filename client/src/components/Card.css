@@ -1,0 +1,17 @@
+.card{
+    display: flex;
+    border-radius:100px;
+    border:10px solid #666;
+    width: 25%; 
+    height: 250px;
+    border-color:black /* rgb(76, 0, 255);         */;
+    text-shadow: rgb(22, 21, 21);
+    flex-wrap: wrap;
+    justify-content: auto;
+    margin: auto; 
+}
+
+.heading {
+     color: #fbf8f8ed; 
+     text-shadow: 2px 2px black;
+}
