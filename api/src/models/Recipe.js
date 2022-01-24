@@ -13,15 +13,12 @@ module.exports = (sequelize) => {
     name: {
       type: DataTypes.STRING,
       allowNull: false,
-    },
-    image: {
-      type: DataTypes.STRING
-    },
+    },   
     resumePlate: {     // esto es Resumen - del plato
       type: DataTypes.STRING,
       allowNull: false,
     },
-    puntuation: { // esto es puntuacion - del plato
+    spoonacularScore: { // esto es puntuacion - del plato
       type: DataTypes.STRING,
       allowNull: true,
     },
@@ -33,15 +30,20 @@ module.exports = (sequelize) => {
       type: DataTypes.STRING,
       allowNull: false
     },
-    // type: {
-    //   type: DataTypes.ENUM('Sin gluten', 'Ketogénica', 'Vegetariano', 'Lacto-vegetariano', 'Ovo-Vegetariano', 'Vegano', 'Pescetariano', 'Paleo'),
-    //   allowNull: false
-    // },
+    //no agrego DIET porque lo useo de la table intermedia recipes_diets
+    image: {
+      type: DataTypes.STRING
+    },
     createInDb:{ // esto nos permite saber si el valor llamado proviene de la base de datos o la Api
-        type: DataTypes.BOOLEAN,
-        allowNull: false,
-        defaultValue: true,
+      type: DataTypes.BOOLEAN,
+      allowNull: false,
+      defaultValue: true,
     }
+    //  type: {
+    //    type: DataTypes.ENUM('gluten free', 'dairy free', 'paleolithic', 'lacto ovo vegetarian', 'primal', 'vegan'),
+    //    allowNull: false
+    // },
+    
   });
   return Recipe;
 };

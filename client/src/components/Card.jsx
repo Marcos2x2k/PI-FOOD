@@ -1,7 +1,7 @@
 import React from 'react';
 import './Card.css'; // importo los styles de mi Card.css
 
-export default function Card({name, image, resumePlate, puntuation, healthyLevel}){
+export default function Card({name, image, resumePlate}){
     return (
         <div>
             <h3 class="heading">{name}</h3>

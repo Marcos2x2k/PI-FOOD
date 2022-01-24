@@ -29,7 +29,7 @@ sequelize.models = Object.fromEntries(capsEntries);
 
 // En sequelize.models están todos los modelos importados como propiedades
 // Para relacionarlos hacemos un destructuring
-const { Recipe, Type } = sequelize.models; // Aguegue type porque no estaba
+const { Recipe, Diet } = sequelize.models; // Agregue type porque no estaba
 
 // Aca vendrian las relaciones DE MUCHO A MUCHOS
 // Product.hasMany(Reviews);
@@ -37,8 +37,8 @@ const { Recipe, Type } = sequelize.models; // Aguegue type porque no estaba
 // La relación entre ambas entidades debe ser de muchos a muchos 
 // ya que una receta puede ser parte de varios tipos de dieta en simultaneo y, 
 // a su vez, un tipo de dieta puede contener múltiples recetas distintas. 
-Type.belongsToMany(Recipe, {through: "recipe_type"});
-Recipe.belongsToMany(Type, {through: "recipe_type"}); // atravez tabla intermedia recipes_types
+Diet.belongsToMany(Recipe, {through: "recipe_diet"});
+Recipe.belongsToMany(Diet, {through: "recipe_diet"}); // atravez tabla intermedia recipes_types
 
 
 

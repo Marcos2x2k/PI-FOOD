@@ -2,9 +2,9 @@ import React from "react";
 import Button from '@material-ui/core/Button'; //npm i @material-ui/core
 
 //IMPORTO PORQUE USAMOS HOOKS
-import { useState, useEffect, Fragment } from 'react';
+import { useState, useEffect, Fragment } from 'react'; //Fragment es como un div para envolver hijos div en app
 import {useDispatch, useSelector} from 'react-redux'
-import {getRecipes} from '../actions';
+import {getRecipes, filterRecipesByStatus, filterCreated, orderByName, setPage} from '../actions'; // Siempre importo las acciones nuevas
 
 //LINK nos sirve para poder movernos por nuestra aplicación 
 //más fácilmente en lugar de tener que cambiar la URL manualmente en el navegador.
@@ -16,7 +16,7 @@ import Card from './Card';
 //IMPORTAMOS EL PAGINADO
 import Paginado from './Paginado';
 
-export default function Home (){
+export default function Home () {
 
     const dispatch = useDispatch(); // PARA USAR HOOKS
     const allRecipes = useSelector((state) => state.recipes) //HOOKS es lo mismo q maps.state.props
@@ -24,6 +24,7 @@ export default function Home (){
     //CREO VARIOS ESTADOS LOCALES y lo seteo en 1- ACA CALCULO LAS CARD POR PAGINAS
     const [currentPage, setCurrentPage] = useState(1)
     const [recipesPerPage, setRecipesPerPage] = useState(9) //DEFINO LAS 9 RECETAS POR PAGE Q PIDEN
+    const [orden, setOrden] = useState(''); // es un estado local q arranca vacio para el Asc y Desc Order
     const indexOfLastRecipe = currentPage * recipesPerPage // 6
     const indexOfFirstRecipe     = indexOfLastRecipe - recipesPerPage // 0
     const currentRecipes = allRecipes.slice(indexOfFirstRecipe, indexOfLastRecipe) 
@@ -37,15 +38,28 @@ export default function Home (){
         dispatch(getRecipes()) // ACCION QUE ME TRAE LAS RECETAS
     },[dispatch])
 
+    // ORDENAMIENTO DE PAGINA ASCENDENTE O DESCENDENTE
+    function handleSort(p){
+        p.preventDefault();
+        dispatch(orderByName(p.target.value)) //despacho la accion
+        setCurrentPage(1); //ordenamiento seteado en pagina 1
+        setOrden(`Ordenado ${p.target.value}`)  //es un estado local vacio, lo uso para modif estado local y renderize
+    };
 // PARA RESETEAR AL TOCAR EL BOTON volver a cargar las recetas
 function handleClick(p){
     p.prevent.default();  //PREVENTIVO PARA Q NO RECARGUE TODA LA PAGINA
     dispatch(getRecipes());
 }
 
+//Aca aplico lógica, esta funcion le paso en el select de Types NE HOME -> ALL VEGETARIAN ETC
+function handleFilterStatus(p){ // ESTE ONCHANGE LO PONGO EN EL SELECT ACA LINEA 76
+    dispatch(filterRecipesByStatus(p.target.value))
+}
+
+
 // RENDERIZADOS
 // Aca renderizamos un Div
-return( 
+    return( 
         <div> 
             <Link to='/recipe'> 
               <Button variant="contained" color="primary"> CREAR RECETA </Button>
@@ -63,20 +77,22 @@ return(
        <div>
             
             {/* ACA DEFINO EL SELECT PARA EL ORDENAMIENTO */}
-            <select> 
+            <select onChange={p => handleSort(p)}>
                 <option value='asc'>Ascendente</option>
                 <option value='desc'>Descendente</option>
             </select>
-            <select>
-                <option value='Todos'>Todos</option>
-                <option value='Singluten'>Sin gluten</option>
-                <option value='Ketogénica'>Ketogénica</option>
-                <option value='Vegetariano'>Vegetariano</option>
-                <option value='Lactovegetariano'>Lacto Vegetariano</option>
-                <option value='Ovovegetariano'>Ovo Vegetariano</option>
-                <option value='Vegano'>Vegano</option>
-                <option value='Pescetariano'>Pescetariano</option>
-                <option value='Paleo'>Paleo</option>
+            <select onChange={(p) => handleFilterStatus(p)}>
+                <option value=''> -- Select --</option>
+                <option value="Gluten Free">Gluten Free</option>
+                <option value="Ketogenic">Ketogenic</option>
+                <option value="Vegetarian">Vegetarian</option>
+                <option value="Lacto-Vegetarian">Lacto-Vegetarian</option>
+                <option value="Ovo-Vegetarian">Ovo-Vegetarian</option>
+                <option value="Vegan">Vegan</option>
+                <option value="Pescetarian">Pescetarian</option>
+                <option value="Paleo">Paleo</option>
+               <option value="Primal">Primal</option>
+               <option value="Whole 30">Whole 30</option>
             </select>
             <select>
                 <option value='Todos'>Todos</option>
@@ -94,12 +110,11 @@ return(
                     <div>
                         <Link to = {'/home/' + p.id}>
                         {/* //pase por props .name .img .resumePlate  */}
-                            <Card name={p.name} image={p.image} resumePlate={p.resumePlate} key={p.id}/> 
+                            <Card name={p.name} image={p.image} spoonacularScore={p.spoonacularScore}/> 
                         </Link>
                     </div>
                 )
             })}
        </div>
        </div>
-)
-}
+    )}

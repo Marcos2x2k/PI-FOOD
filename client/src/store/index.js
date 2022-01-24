@@ -6,7 +6,7 @@ import {composeWithDevTools} from 'redux-devtools-extension'
 //necesitarás algo más. Aquí es donde entra redux-thunk.
 import thunk from 'redux-thunk'
 
-import rootReducer from "../reducer";
+import rootReducer from "../reducer/index";
 
 
 export const store = createStore(rootReducer, composeWithDevTools(applyMiddleware(thunk)));

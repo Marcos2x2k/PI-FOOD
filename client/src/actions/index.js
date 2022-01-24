@@ -1,5 +1,9 @@
-import axios from 'axios';
+// ACA REALIZO LOS FILTRADOS es decir la ACCION (despachar un tipo)
+//LA LOGICA LA HAGO EN REDUCER o COMPONENTES, YO USO REDUCER
 
+
+
+import axios from 'axios';
 export const SET_PAGE = 'SET_PAGE';
 
 //aca se realiza la coneccion de back con el front LINEA 7 y 8
@@ -23,3 +27,25 @@ export const SET_PAGE = 'SET_PAGE';
         } catch (error) {
             console.log(error)
     }}};
+
+    export function filterRecipesByStatus(payload){
+        console.log(payload)
+        return{
+            type: 'FILTER_BY_STATUS',
+            payload 
+        }
+    }
+
+    //hacemos la accion de filtrar por API o Bdatos // payload trae el value de la accion q elija
+export function filterCreated(payload){
+    return{
+        type: 'FILTER_CREATED',
+        payload
+    }
+};
+export function orderByName(payload){
+    return{
+        type: 'ORDER_BY_NAME',
+        payload
+    }
+}

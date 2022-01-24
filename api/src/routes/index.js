@@ -5,15 +5,14 @@ const axios = require('axios'); // aca importo axios despues del npm i axios
 
 //const {Sequelize} = require ('sequelize');
 
-// Importar todos los routers;
-// Ejemplo: const authRouter = require('./auth.js');
 //ME TRAIGO LAS TABLAS DE LA DB
-const { Recipe, Type } = require('../db.js'); // AGREGO DE LA DB RECIPES_TYPES para cuando necesite hacer las relaciones
-const {API_KEY} = process.env;
+const { Recipe, Diet } = require('../db.js'); // AGREGO DE LA DB RECIPES_TYPES para cuando necesite hacer las relaciones
+const {DB_API} = process.env;
 
+// Importar todos los routers; // Ejemplo: const authRouter = require('./auth.js'); 
 //---- ACA DEFINO LAS CONSTANTES PARA EL MIDDLEWARE EN LA LINEA 95
 const recipesRouter = require("./recipes");
-const typesRouter = require("./types");
+const dietsRouter = require("./diets");
 
  
 //TRAIGO SEQUELIZE PARA LOS OPERADORES QUE NECESITE
@@ -42,10 +41,10 @@ const router = Router();
                 const apiHtml = await axios.get('https://api.spoonacular.com/recipes/complexSearch?apiKey=e52d0eec39494ada9566cf2aff44255e&addRecipeInformation=true&number=100');
             
                                         // ('https://api.spoonacular.com/recipes/complexSearch',{
-                                        // headers: {'x-api-key': `${API_KEY}`}}); 
-                                        //('https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true&number=100');
-                                      //('https://api.spoonacular.com/recipes/complexSearch?apiKey=${API_KEY}&addRecipeInformation=true&number=100');
-                                      //https://api.spoonacular.com/recipes/complexSearch?apiKey=${YOUR_API_KEY}&number=100
+                                        // headers: {'x-api-key': `${DB_API}`}}); 
+                                        //('https://api.spoonacular.com/recipes/complexSearch?apiKey=${DB_API}&addRecipeInformation=true&number=100');
+                                      //('https://api.spoonacular.com/recipes/complexSearch?apiKey=${DB_API}&addRecipeInformation=true&number=100');
+                                      //https://api.spoonacular.com/recipes/complexSearch?apiKey=${DB_API}&number=100
                                       // para verlo en el navegador va sin $ y sin llaves y  en el código con $ y llaves
                                       //https://api.spoonacular.com/recipes/complexSearch?apiKey=dcdefe9c20dd489db36f3ac43aaa913a&addRecipeInformation=true
 
@@ -55,14 +54,14 @@ const router = Router();
                     id: p.id,
                     name: p.title,
                     image: p.image,
-                    resumen: p.summary,
-                    puntuacion: p.spoonacularScore,
-                    saludableLvl: p.healthScore,
-                    stepByStep: p.analyzedInstructions
+                    summary: p.summary,
+                    spoonacularScore: p.spoonacularScore,
+                    healthScore: p.healthScore,
+                    analyzedInstructions: p.analyzedInstructions
                     .map(a => a.steps.map(b => b.step))
                     .flat(1)
                     .join(""),
-                    type: p.diets.map(diet => diet)                     
+                    diet: p.diets //map(diet => diet)                     
                 };
         });return apiInfo;
     };
@@ -71,7 +70,7 @@ const router = Router();
 const getDbInfo = async () => {
     return await Recipe.findAll({
             include:{
-                model: Type,
+                model: Diet,
                 attributes: ['name'],
                 through: {
                     attributes: [],
@@ -90,8 +89,8 @@ const getAllRecipes = async () => {
 
 //-- defino el middleware
 router.use("/recipes", recipesRouter);
-router.use("/types", typesRouter);
-//-------------------------------------------------------------
+router.use("/diets", dietsRouter);
+// //-------------------------------------------------------------
 
 // ACA GENERO TODOS LOS GET   (/recipes) (/types) y por (/recipes/:id)
 
@@ -110,21 +109,21 @@ router.get ('/recipes', async (req, res) =>{
     }
 })
 
-//GET POR TYPES (es por tipos de Dietas)
-router.get ('/types', async (req, res) =>{
-    const apiHtml = await axios.get('https://api.spoonacular.com/recipes/complexSearch?apiKey=e52d0eec39494ada9566cf2aff44255e&addRecipeInformation=true&number=100');
-    const type = apiHtml.data.map(p => p.type)
+//GET POR DIETS (es por tipos de Dietas)
+router.get('/diets', async (req, res) =>{
+    const apiHtml = await axios ('https://api.spoonacular.com/recipes/complexSearch?apiKey=e52d0eec39494ada9566cf2aff44255e&addRecipeInformation=true&number=100');
+    const diet = apiHtml.data.map(p => p.diet)
 
-    const types = type.toString().trim().split(/\s*,\s*/);
-    const splittype = await types.filter(p => p.length > 0);
+    //const diets = diet.toString().trim().split(/\s*,\s*/);
+    const splitdiet = await diet.filter(p => p.length > 0);
     
-    console.log (splittype) //puedo comprobar lo q trae    
+    //console.log (splittype) //puedo comprobar lo q trae    
 
-    splittype.forEach(p => {
+    splitdiet.forEach(p => {
         //ME TRAIGO LOS TYPOS DE DIETAS DE LA BASE DE DATOS LOS BUSCA O CREA SI NO EXISTEN
-        if (p!==undefined) Type.findOrCreate({where: {name: p}})});
-    const allType = await Type.findAll();
-    res.send(allType);
+        if (p!==undefined) Diet.findOrCreate({where: {name: p}})});
+    const allDiet = await Diet.findAll();
+    res.send(allDiet);
 })
 
 // GET POR :ID 
@@ -145,30 +144,30 @@ router.get('/recipes/:id', async (req, res) => {
 router.post('/recipes', async (req, res) => {
     /// ** traigo lo q me pide por Body ** 
     let {  
-          name,
-          image,
+          name,          
           resumePlate,
           puntuation,
           healthyLevel,
           stepToStep,
-          type,
+          diet,
+          image,
           createInDb,
     } = req.body
 
     let recipeCreated = await Recipe.create ({
-          name,
-          image,
+          name,          
           resumePlate,
           puntuation,
           healthyLevel,
           stepToStep,
-          type,
+          diet,
+          image,
           createInDb,
     })
-    let typeDb = await Type.findAll({
-        where: {name : type}
+    let dietDb = await Diet.findAll({
+        where: {name : diet}
     })
-    recipeCreated.addType(typeDb)
+    recipeCreated.addDiet(dietDb)
     res.send('Receta Creada Exitosamente')
 });
 
